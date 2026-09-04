@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or site.title[lang] }} · {{ site.title[lang] }}</title>
+  <meta name="description" content="{{ description or site.description[lang] }}">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+  {% include "partials/header.njk" %}
+  <main id="main-content" class="container">
+    {% if isUpdate and publicationKey %}
+      {% set parentPublication = collections.publications | publicationForKey(publicationKey, lang) %}
+      {% if parentPublication %}
+      <p class="back-link"><a href="{{ parentPublication.url }}">&#8592; {{ "Retour à la publication" if lang == "fr" else "Back to publication" }}</a></p>
+      {% endif %}
+    {% endif %}
+    {{ content | safe }}
+  </main>
+  {% include "partials/footer.njk" %}
+</body>
+</html>

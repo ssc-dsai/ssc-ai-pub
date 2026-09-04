@@ -1,0 +1,13 @@
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="site-header__logo" href="/{{ lang }}/">{{ site.title[lang] }}</a>
+    <nav class="site-header__nav" aria-label="{{ 'Primary' if lang == 'en' else 'Principale' }}">
+      <a href="/{{ lang }}/">{{ "Home" if lang == "en" else "Accueil" }}</a>
+    </nav>
+    <div class="site-header__lang">
+      <a href="/en/" hreflang="en" lang="en" {% if lang == "en" %}aria-current="true"{% endif %}>EN</a>
+      <span aria-hidden="true">/</span>
+      <a href="/fr/" hreflang="fr" lang="fr" {% if lang == "fr" %}aria-current="true"{% endif %}>FR</a>
+    </div>
+  </div>
+</header>

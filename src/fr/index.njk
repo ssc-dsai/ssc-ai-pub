@@ -1,0 +1,54 @@
+---
+title: Accueil
+eleventyNavigation:
+  key: Accueil
+pagination:
+  data: collections.publicationsFr
+  size: 10
+  alias: publications
+permalink: "fr/{% if pagination.pageNumber > 0 %}page/{{ pagination.pageNumber + 1 }}/{% endif %}index.html"
+---
+<section class="papers-page__intro" aria-labelledby="papers-title">
+  <p class="eyebrow">Centre d'excellence en IA</p>
+  <h1 id="papers-title">Publications</h1>
+  <p class="papers-page__lede">Rapports, conseils et recherches du Centre d'excellence en IA et de la communauté de la fonction publique.</p>
+</section>
+
+<div class="papers-search">
+  <label for="search-input">Rechercher des publications</label>
+  <input id="search-input" type="search" placeholder="Rechercher par titre, sujet ou auteur" aria-label="Rechercher des publications">
+</div>
+
+<div class="papers-toolbar">
+  <p><strong>{{ collections.publicationsFr | length }}</strong> publications</p>
+</div>
+
+<ol class="publication-list" id="publication-list">
+  {% for pub in publications %}
+  <li class="publication-card" data-search-content="{{ pub.data.title }} {{ pub.data.summary }} {{ pub.data.author }} {{ pub.data.tags | join(' ') }}">
+    <div class="publication-card__date" aria-label="Publié le {{ pub.date | readableDate('fr-CA') }}">
+      <span>{{ pub.date | readableDate("fr-CA") }}</span>
+    </div>
+    <div class="publication-card__content">
+      <div class="publication-card__type">{{ pub.data.tags[1] or "Publication" }}</div>
+      <h2><a href="{{ pub.url }}">{{ pub.data.title }}</a></h2>
+      {% if pub.data.summary %}<p class="publication-card__summary">{{ pub.data.summary }}</p>{% endif %}
+      <div class="publication-card__footer">
+        <span>Par {{ pub.data.author or site.organization.fr }}</span>
+        <a class="publication-card__link" href="{{ pub.url }}">Voir la publication <span aria-hidden="true">&#8594;</span></a>
+      </div>
+    </div>
+  </li>
+  {% else %}
+  <li class="publication-card"><p>Aucune publication pour le moment.</p></li>
+  {% endfor %}
+</ol>
+<nav class="pagination" aria-label="Pagination">
+  {% if pagination.href.previous %}<a class="pagination__control" href="{{ pagination.href.previous }}">Précédent</a>{% else %}<span class="pagination__control pagination__control--disabled">Précédent</span>{% endif %}
+  <span class="pagination__pages">
+    {% for href in pagination.hrefs %}<a class="pagination__page{% if loop.index0 == pagination.pageNumber %} pagination__page--active{% endif %}" href="{{ href }}"{% if loop.index0 == pagination.pageNumber %} aria-current="page"{% endif %}>{{ loop.index }}</a>{% endfor %}
+  </span>
+  {% if pagination.href.next %}<a class="pagination__control" href="{{ pagination.href.next }}">Suivant</a>{% else %}<span class="pagination__control pagination__control--disabled">Suivant</span>{% endif %}
+</nav>
+<p class="search-empty" hidden>Aucune publication ne correspond à votre recherche.</p>
+<script src="/assets/js/search.js" defer></script>

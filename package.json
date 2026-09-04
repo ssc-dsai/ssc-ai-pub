@@ -1,0 +1,17 @@
+{
+  "name": "ssc-ai-pub",
+  "version": "0.1.0",
+  "description": "SSC AI Centre of Excellence publications site",
+  "private": true,
+  "scripts": {
+    "build": "eleventy",
+    "serve": "eleventy --serve",
+    "debug": "DEBUG=Eleventy* eleventy"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  }
+}

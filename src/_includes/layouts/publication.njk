@@ -1,0 +1,52 @@
+---
+layout: layouts/base.njk
+---
+<article class="publication">
+  <p class="back-link"><a href="/{{ lang }}/">&#8592; {{ "Retour à l'accueil" if lang == "fr" else "Back to home" }}</a></p>
+  <header class="publication__header">
+    <p class="publication__meta">
+      {{ lang == "fr" and "Publié le" or "Published" }}
+      {{ date | readableDate(lang == "fr" and "fr-CA" or "en-CA") }}
+      {% if author %} · {{ author }}{% endif %}
+    </p>
+    <h1>{{ title }}</h1>
+    {% if summary %}<p class="publication__summary">{{ summary }}</p>{% endif %}
+  </header>
+
+  {% set otherLang = "fr" if lang == "en" else "en" %}
+  {% set otherVersion = collections.publications | translation(translationKey, otherLang) %}
+  {% if otherVersion %}
+    <p class="publication__lang-switch">
+      <a href="{{ otherVersion.url }}">
+        {{ "Lire en français" if lang == "en" else "Read in English" }}
+      </a>
+    </p>
+  {% endif %}
+
+  <div class="publication__body">
+    {{ content | safe }}
+  </div>
+
+  {% set relatedUpdates = collections.updates | updatesForPublication(publicationKey, lang) %}
+  {% if relatedUpdates.length %}
+  <section class="publication__updates" aria-labelledby="updates-title">
+    <h2 id="updates-title">{{ "Mises à jour" if lang == "fr" else "Updates" }}</h2>
+    <ul>
+      {% for update in relatedUpdates %}
+      <li>
+        <a href="{{ update.url }}">{{ update.data.title }}</a>
+        <time datetime="{{ update.date | isoDate }}">{{ update.date | readableDate(lang == "fr" and "fr-CA" or "en-CA") }}</time>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  {% if tags %}
+  <ul class="publication__tags">
+    {% for tag in tags %}
+      {% if tag != "publications" %}<li>{{ tag }}</li>{% endif %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+</article>
