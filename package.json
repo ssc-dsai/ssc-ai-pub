@@ -4,12 +4,16 @@
   "description": "SSC AI Centre of Excellence publications site",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "build": "eleventy",
     "serve": "eleventy --serve",
     "debug": "DEBUG=Eleventy* eleventy"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1"
