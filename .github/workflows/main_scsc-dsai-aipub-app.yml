@@ -9,25 +9,55 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: app-service-deploy
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Node.js version
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '24.x'
+          cache: npm
 
-      - name: Upload artifact for deployment job
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Eleventy site
+        run: npm run build
+
+      - name: Remove development dependencies
+        run: npm prune --omit=dev
+
+      - name: Prepare deployment package
+        shell: bash
+        run: |
+          mkdir -p deploy
+          cp package.json package-lock.json server.js deploy/
+          cp -r _site node_modules deploy/
+
+      - name: Verify deployment package
+        shell: bash
+        run: |
+          test -f deploy/_site/index.html
+          test -f deploy/server.js
+          test -f deploy/package.json
+          test -f deploy/package-lock.json
+          test -f deploy/node_modules/express/package.json
+
+      - name: Upload deployment package
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
-          path: .
+          name: app-package
+          path: deploy/
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,8 +70,9 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: node-app
-      
+          name: app-package
+          path: deploy
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -54,6 +85,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'ScSc-dsai-aipub-app'
-          slot-name: 'Production'
-          package: .
-          
+          package: ./deploy
